@@ -1,8 +1,16 @@
 import { useState } from "react";
 import { useAuth } from "../context/AuthContext";
 import { API_BASE_URL } from "../config";
+import { useEffect } from "react";
+const AUTH_SERVER = "http://localhost:5174"; // SSO frontend
 
 export default function Login() {
+  useEffect(() => {
+    const redirect = `${window.location.origin}/sso/callback`;
+    window.location.href = `${AUTH_SERVER}/login?redirect=${redirect}`;
+  }, []);
+
+  return <p>Redirecting to SSO login...</p>;
   const { login: authLogin } = useAuth();
 
   const [mode, setMode] = useState("login"); // "login" | "signup"

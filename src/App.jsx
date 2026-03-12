@@ -2,6 +2,7 @@ import { BrowserRouter, Routes, Route, Navigate } from "react-router-dom";
 import Login from "./pages/Login";
 import MailInbox from "./pages/MailInbox";
 import { useAuth } from "./context/AuthContext";
+import SSOCallback from "./pages/SSOCallback";
 
 function App() {
   const { user, loading } = useAuth();
@@ -11,6 +12,10 @@ function App() {
   return (
     <BrowserRouter>
       <Routes>
+        {/* SSO callback */}
+        <Route path="/sso/callback" element={<SSOCallback />} />
+
+
         {/* Public */}
         <Route
           path="/login"
