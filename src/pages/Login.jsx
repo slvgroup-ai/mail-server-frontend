@@ -1,6 +1,6 @@
 import { useState } from "react";
 import { useAuth } from "../context/AuthContext";
-import { API_BASE_URL, EMAIL_DOMAIN } from "../config";
+import { API_BASE_URL, EMAIL_DOMAIN, EMAIL_DOMAIN_COMPANY_NAME } from "../config";
 
 export default function Login() {
   const { login: authLogin } = useAuth();
@@ -320,7 +320,7 @@ export default function Login() {
         {/* Logo */}
         <div style={s.logoWrap}>
           <div style={s.logoBadge}>M</div>
-          <span style={s.logoTitle}>slvai mail</span>
+          <span style={s.logoTitle}>{EMAIL_DOMAIN_COMPANY_NAME} mail</span>
           <span style={s.logoSub}>@{EMAIL_DOMAIN} workspace</span>
         </div>
 

@@ -1,5 +1,5 @@
 import { useEffect, useState, useRef } from "react";
-import { API_BASE_URL } from "../config";
+import { API_BASE_URL ,EMAIL_DOMAIN_SUB_COMPANY_NAME} from "../config";
 import { useAuth } from "../context/AuthContext";
 
 /* ─── Icons (inline SVG components) ─── */
@@ -155,7 +155,7 @@ export default function MailInbox() {
                         <span style={t.bar} />
                         <span style={t.bar} />
                     </div>
-                    <span style={t.logoMailPrefix}>SLV</span>
+                    <span style={t.logoMailPrefix}>{EMAIL_DOMAIN_SUB_COMPANY_NAME}</span>
                     <span style={t.logoMail}>M</span>
                     <span style={t.logoText}>ail</span>
                 </div>
