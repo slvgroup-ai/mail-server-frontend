@@ -17,6 +17,7 @@ const XIcon = () => <Icon d="M18 6L6 18 M6 6l12 12" size={18} />;
 const SearchIcon = () => <Icon d="M21 21l-4.35-4.35M17 11A6 6 0 115 11a6 6 0 0112 0z" />;
 const MinimizeIcon = () => <Icon d="M5 12h14" size={16} />;
 const MaximizeIcon = () => <Icon d="M8 3H5a2 2 0 00-2 2v3m18 0V5a2 2 0 00-2-2h-3m0 18h3a2 2 0 002-2v-3M3 16v3a2 2 0 002 2h3" size={16} />;
+const PaperclipIcon = () => <Icon d="M21.44 11.05l-9.19 9.19a6 6 0 01-8.49-8.49l9.19-9.19a4 4 0 015.66 5.66l-9.2 9.19a2 2 0 01-2.83-2.83l8.49-8.48" size={18} />;
 
 /* ─── Sun / Moon Icons ─── */
 const SunIcon = () => (
@@ -56,10 +57,13 @@ export default function MailInbox() {
     const [composeMinimized, setComposeMinimized] = useState(false);
     const [composeMaximized, setComposeMaximized] = useState(false);
     const [compose, setCompose] = useState({ to: "", subject: "", text: "" });
+    // ── NEW: attachments state ──
+    const [attachments, setAttachments] = useState([]); // Array of File objects
     const [sending, setSending] = useState(false);
     const [sendError, setSendError] = useState(null);
     const [sendSuccess, setSendSuccess] = useState(false);
     const userMenuRef = useRef(null);
+    const fileInputRef = useRef(null); // ── NEW: ref for hidden file input
 
     /* ── Fetch inbox ── */
     useEffect(() => {
@@ -83,17 +87,48 @@ export default function MailInbox() {
         return () => document.removeEventListener("mousedown", handler);
     }, []);
 
+    /* ── Handle file selection ── */
+    const handleFileChange = (e) => {
+        const newFiles = Array.from(e.target.files);
+        setAttachments(prev => [...prev, ...newFiles]);
+        // Reset input so same file can be re-added if removed
+        e.target.value = "";
+    };
+
+    /* ── Remove a single attachment ── */
+    const removeAttachment = (index) => {
+        setAttachments(prev => prev.filter((_, i) => i !== index));
+    };
+
+    /* ── Format file size ── */
+    const formatFileSize = (bytes) => {
+        if (bytes < 1024) return `${bytes} B`;
+        if (bytes < 1024 * 1024) return `${(bytes / 1024).toFixed(1)} KB`;
+        return `${(bytes / (1024 * 1024)).toFixed(1)} MB`;
+    };
+
+    /* ── Send mail (now uses FormData to support attachments) ── */
     const sendMail = async () => {
         setSending(true);
         setSendError(null);
         setSendSuccess(false);
         try {
+            // ── Build FormData instead of JSON ──
+            const formData = new FormData();
+            formData.append("to", compose.to);
+            formData.append("subject", compose.subject);
+            formData.append("text", compose.text);
+            attachments.forEach((file) => {
+                formData.append("attachments", file); // backend reads req.files["attachments"]
+            });
+
             const res = await fetch(`${API_BASE_URL}/mail/send`, {
                 method: "POST",
                 credentials: "include",
-                headers: { "Content-Type": "application/json" },
-                body: JSON.stringify(compose),
+                // ⚠️ Do NOT set Content-Type header — browser sets it automatically with boundary
+                body: formData,
             });
+
             if (!res.ok) {
                 const err = await res.json();
                 throw new Error(err.message || "Send failed");
@@ -110,6 +145,7 @@ export default function MailInbox() {
             setSendSuccess(true);
             setTimeout(() => {
                 setCompose({ to: "", subject: "", text: "" });
+                setAttachments([]); // ── clear attachments on success
                 setComposeOpen(false);
                 setSendSuccess(false);
             }, 1200);
@@ -118,6 +154,14 @@ export default function MailInbox() {
         } finally {
             setSending(false);
         }
+    };
+
+    /* ── Close compose and reset all state ── */
+    const closeCompose = () => {
+        setComposeOpen(false);
+        setCompose({ to: "", subject: "", text: "" });
+        setAttachments([]);
+        setSendError(null);
     };
 
     const currentMails = view === "inbox" ? mails : sentMails;
@@ -333,7 +377,7 @@ export default function MailInbox() {
                             <button style={t.composeIconBtn} onClick={() => setComposeMaximized(v => !v)} title="Full screen">
                                 <MaximizeIcon />
                             </button>
-                            <button style={t.composeIconBtn} onClick={() => { setComposeOpen(false); setCompose({ to: "", subject: "", text: "" }); setSendError(null); }} title="Close">
+                            <button style={t.composeIconBtn} onClick={closeCompose} title="Close">
                                 <XIcon />
                             </button>
                         </div>
@@ -365,11 +409,54 @@ export default function MailInbox() {
                                 onChange={e => setCompose({ ...compose, text: e.target.value })}
                                 style={t.composeTextarea}
                             />
+
+                            {/* ── ATTACHMENT PREVIEWS ── */}
+                            {attachments.length > 0 && (
+                                <div style={t.attachmentList}>
+                                    {attachments.map((file, idx) => (
+                                        <div key={idx} style={t.attachmentChip}>
+                                            <PaperclipIcon />
+                                            <span style={t.attachmentName} title={file.name}>
+                                                {file.name.length > 20 ? file.name.slice(0, 18) + "…" : file.name}
+                                            </span>
+                                            <span style={t.attachmentSize}>{formatFileSize(file.size)}</span>
+                                            <button
+                                                style={t.attachmentRemove}
+                                                onClick={() => removeAttachment(idx)}
+                                                title="Remove attachment"
+                                            >
+                                                <XIcon />
+                                            </button>
+                                        </div>
+                                    ))}
+                                </div>
+                            )}
+
                             <div style={t.composeFooter}>
+                                {/* ── Hidden file input ── */}
+                                <input
+                                    ref={fileInputRef}
+                                    type="file"
+                                    multiple
+                                    style={{ display: "none" }}
+                                    onChange={handleFileChange}
+                                />
+
+                                {/* ── Attach button ── */}
+                                <button
+                                    style={t.attachBtn}
+                                    onClick={() => fileInputRef.current?.click()}
+                                    title="Attach files"
+                                    disabled={sending}
+                                >
+                                    <PaperclipIcon />
+                                </button>
+
                                 {sendError && <span style={t.errorMsg}>{sendError}</span>}
                                 {sendSuccess && <span style={t.successMsg}>✓ Sent!</span>}
+
                                 <button
-                                    style={{ ...t.sendBtn, ...(sending ? { opacity: 0.7 } : {}) }}
+                                    style={{ ...t.sendBtn, ...(sending ? { opacity: 0.7 } : {}), marginLeft: "auto" }}
                                     onClick={sendMail}
                                     disabled={sending || !compose.to}
                                 >
@@ -401,6 +488,8 @@ function theme(dark) {
         composeField: "#3c3f43",
         mainBg: "#1e2022",
         sidebarBg: "#1f2124",
+        chipBg: "#3c3f43",
+        chipText: "#c9d1d9",
     } : {
         bg: "#f6f8fc",
         bgAlt: "#fff",
@@ -416,6 +505,8 @@ function theme(dark) {
         composeField: "#e0e0e0",
         mainBg: "#fff",
         sidebarBg: "#f6f8fc",
+        chipBg: "#e8f0fe",
+        chipText: "#1a73e8",
     };
 
     return {
@@ -935,8 +1026,51 @@ function theme(dark) {
             outline: "none",
             fontFamily: "inherit",
             resize: "none",
-            minHeight: 260,
+            minHeight: 220,
             boxSizing: "border-box",
+        },
+        /* ── Attachment list ── */
+        attachmentList: {
+            display: "flex",
+            flexWrap: "wrap",
+            gap: 8,
+            padding: "8px 16px",
+            borderTop: `1px solid ${c.border}`,
+            background: c.composeBg,
+        },
+        attachmentChip: {
+            display: "flex",
+            alignItems: "center",
+            gap: 6,
+            background: c.chipBg,
+            color: c.chipText,
+            borderRadius: 16,
+            padding: "4px 10px 4px 8px",
+            fontSize: 12,
+            fontWeight: 500,
+            maxWidth: 220,
+        },
+        attachmentName: {
+            overflow: "hidden",
+            textOverflow: "ellipsis",
+            whiteSpace: "nowrap",
+            maxWidth: 110,
+        },
+        attachmentSize: {
+            color: c.textMuted,
+            fontSize: 11,
+            flexShrink: 0,
+        },
+        attachmentRemove: {
+            background: "none",
+            border: "none",
+            cursor: "pointer",
+            padding: 0,
+            display: "flex",
+            alignItems: "center",
+            color: c.textMuted,
+            marginLeft: 2,
+            flexShrink: 0,
         },
         composeFooter: {
             display: "flex",
@@ -945,6 +1079,20 @@ function theme(dark) {
             padding: "12px 16px",
             borderTop: `1px solid ${c.border}`,
             background: c.composeBg,
+        },
+        /* ── Attach button ── */
+        attachBtn: {
+            background: "none",
+            border: "none",
+            cursor: "pointer",
+            color: c.textSub,
+            display: "flex",
+            alignItems: "center",
+            justifyContent: "center",
+            padding: 6,
+            borderRadius: "50%",
+            transition: "background 0.15s",
+            flexShrink: 0,
         },
         sendBtn: {
             background: dark ? "#8ab4f8" : "#0b57d0",
