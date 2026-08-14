@@ -62,7 +62,11 @@ export default function Navbar() {
         </button>
 
         {/* User Avatar */}
-        <div style={t.userAvatar} onClick={() => setShowUserMenu((v) => !v)}>
+        <div
+          data-testid="user_avatar"
+          style={t.userAvatar}
+          onClick={() => setShowUserMenu((v) => !v)}
+        >
           {userInitial}
           <ChevronDown />
         </div>
@@ -77,7 +81,11 @@ export default function Navbar() {
               </div>
             </div>
             <div style={t.userMenuDivider} />
-            <button style={t.userMenuBtn} onClick={logout}>
+            <button
+              data-testid="logout_button"
+              style={t.userMenuBtn}
+              onClick={logout}
+            >
               Sign out
             </button>
           </div>
