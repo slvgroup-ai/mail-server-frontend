@@ -63,6 +63,7 @@ export default function Navbar() {
 
         {/* User Avatar */}
         <div
+          name="user_avatar"
           data-testid="user_avatar"
           style={t.userAvatar}
           onClick={() => setShowUserMenu((v) => !v)}
@@ -82,6 +83,7 @@ export default function Navbar() {
             </div>
             <div style={t.userMenuDivider} />
             <button
+              name="logout_button"
               data-testid="logout_button"
               style={t.userMenuBtn}
               onClick={logout}
