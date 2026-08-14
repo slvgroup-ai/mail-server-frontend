@@ -1,6 +1,10 @@
 import { useState } from "react";
 import { useAuth } from "../context/AuthContext";
-import { API_BASE_URL, EMAIL_DOMAIN, EMAIL_DOMAIN_COMPANY_NAME } from "../config";
+import {
+  API_BASE_URL,
+  EMAIL_DOMAIN,
+  EMAIL_DOMAIN_COMPANY_NAME,
+} from "../config";
 
 export default function Login() {
   const { login: authLogin } = useAuth();
@@ -48,8 +52,10 @@ export default function Login() {
     e.preventDefault();
     setError("");
     if (!signupUsername.trim()) return setError("Username is required");
-    if (signupPassword.length < 6) return setError("Password must be at least 6 characters");
-    if (signupPassword !== signupConfirm) return setError("Passwords do not match");
+    if (signupPassword.length < 6)
+      return setError("Password must be at least 6 characters");
+    if (signupPassword !== signupConfirm)
+      return setError("Passwords do not match");
 
     setLoading(true);
     try {
@@ -100,7 +106,8 @@ export default function Login() {
       width: 500,
       height: 500,
       borderRadius: "50%",
-      background: "radial-gradient(circle, rgba(14,165,233,0.07) 0%, transparent 70%)",
+      background:
+        "radial-gradient(circle, rgba(14,165,233,0.07) 0%, transparent 70%)",
       top: "-10%",
       left: "-10%",
       pointerEvents: "none",
@@ -110,7 +117,8 @@ export default function Login() {
       width: 400,
       height: 400,
       borderRadius: "50%",
-      background: "radial-gradient(circle, rgba(2,132,199,0.06) 0%, transparent 70%)",
+      background:
+        "radial-gradient(circle, rgba(2,132,199,0.06) 0%, transparent 70%)",
       bottom: "-10%",
       right: "-5%",
       pointerEvents: "none",
@@ -123,7 +131,8 @@ export default function Login() {
       border: "1px solid rgba(14,165,233,0.13)",
       borderRadius: 18,
       padding: "38px 36px 32px",
-      boxShadow: "0 0 0 1px rgba(255,255,255,0.03) inset, 0 32px 72px rgba(0,0,0,0.55), 0 0 60px rgba(14,165,233,0.05)",
+      boxShadow:
+        "0 0 0 1px rgba(255,255,255,0.03) inset, 0 32px 72px rgba(0,0,0,0.55), 0 0 60px rgba(14,165,233,0.05)",
     },
     logoWrap: {
       textAlign: "center",
@@ -189,7 +198,8 @@ export default function Login() {
       borderRadius: 8,
       fontSize: 13,
       marginBottom: 18,
-      background: type === "error" ? "rgba(239,68,68,0.08)" : "rgba(34,197,94,0.08)",
+      background:
+        type === "error" ? "rgba(239,68,68,0.08)" : "rgba(34,197,94,0.08)",
       border: `1px solid ${type === "error" ? "rgba(239,68,68,0.2)" : "rgba(34,197,94,0.2)"}`,
       color: type === "error" ? "#fca5a5" : "#86efac",
       lineHeight: 1.5,
@@ -293,7 +303,11 @@ export default function Login() {
   };
 
   /* focus highlight via onFocus/onBlur */
-  const focusStyle = { borderColor: "#0ea5e9", boxShadow: "0 0 0 3px rgba(14,165,233,0.12)", background: "rgba(14,165,233,0.05)" };
+  const focusStyle = {
+    borderColor: "#0ea5e9",
+    boxShadow: "0 0 0 3px rgba(14,165,233,0.12)",
+    background: "rgba(14,165,233,0.05)",
+  };
   const blurStyle = {};
   const addFocus = (e) => Object.assign(e.target.style, focusStyle);
   const removeFocus = (e) => {
@@ -303,11 +317,17 @@ export default function Login() {
   };
   const addEmailFocus = (e) => {
     const wrap = e.target.closest("[data-emailwrap]");
-    if (wrap) { wrap.style.borderColor = "#0ea5e9"; wrap.style.boxShadow = "0 0 0 3px rgba(14,165,233,0.12)"; }
+    if (wrap) {
+      wrap.style.borderColor = "#0ea5e9";
+      wrap.style.boxShadow = "0 0 0 3px rgba(14,165,233,0.12)";
+    }
   };
   const removeEmailFocus = (e) => {
     const wrap = e.target.closest("[data-emailwrap]");
-    if (wrap) { wrap.style.borderColor = "rgba(255,255,255,0.08)"; wrap.style.boxShadow = "none"; }
+    if (wrap) {
+      wrap.style.borderColor = "rgba(255,255,255,0.08)";
+      wrap.style.boxShadow = "none";
+    }
   };
 
   return (
@@ -326,8 +346,20 @@ export default function Login() {
 
         {/* Tabs */}
         <div style={s.tabs}>
-          <button data-testid="login_button" style={s.tab(mode === "login")} onClick={() => switchMode("login")}>Sign In</button>
-          <button data-testid="create_account_button" style={s.tab(mode === "signup")} onClick={() => switchMode("signup")}>Create Account</button>
+          <button
+            data-testid="login_button"
+            style={s.tab(mode === "login")}
+            onClick={() => switchMode("login")}
+          >
+            Sign In
+          </button>
+          <button
+            data-testid="create_account_button"
+            style={s.tab(mode === "signup")}
+            onClick={() => switchMode("signup")}
+          >
+            Create Account
+          </button>
         </div>
 
         {/* Messages */}
@@ -339,12 +371,22 @@ export default function Login() {
           <form onSubmit={handleLogin}>
             <div style={s.group}>
               <label style={s.label}>Email</label>
-              <div data-emailwrap style={{ ...s.emailWrap, transition: "border-color 0.2s, box-shadow 0.2s" }}>
+              <div
+                data-emailwrap
+                style={{
+                  ...s.emailWrap,
+                  transition: "border-color 0.2s, box-shadow 0.2s",
+                }}
+              >
                 <input
                   style={s.emailInput}
                   placeholder="yourname"
                   value={loginUsername}
-                  onChange={e => setLoginUsername(e.target.value.replace(/@.*/g, "").toLowerCase())}
+                  onChange={(e) =>
+                    setLoginUsername(
+                      e.target.value.replace(/@.*/g, "").toLowerCase(),
+                    )
+                  }
                   onFocus={addEmailFocus}
                   onBlur={removeEmailFocus}
                   autoComplete="username"
@@ -361,7 +403,7 @@ export default function Login() {
                 type="password"
                 placeholder="Enter your password"
                 value={loginPassword}
-                onChange={e => setLoginPassword(e.target.value)}
+                onChange={(e) => setLoginPassword(e.target.value)}
                 onFocus={addFocus}
                 onBlur={removeFocus}
                 autoComplete="current-password"
@@ -376,10 +418,22 @@ export default function Login() {
             >
               {loading ? (
                 <>
-                  <span style={{ width: 16, height: 16, border: "2px solid rgba(255,255,255,0.3)", borderTopColor: "#fff", borderRadius: "50%", display: "inline-block", animation: "spin 0.7s linear infinite" }} />
+                  <span
+                    style={{
+                      width: 16,
+                      height: 16,
+                      border: "2px solid rgba(255,255,255,0.3)",
+                      borderTopColor: "#fff",
+                      borderRadius: "50%",
+                      display: "inline-block",
+                      animation: "spin 0.7s linear infinite",
+                    }}
+                  />
                   Signing in…
                 </>
-              ) : "Sign In →"}
+              ) : (
+                "Sign In →"
+              )}
             </button>
           </form>
         )}
@@ -394,7 +448,7 @@ export default function Login() {
                 type="text"
                 placeholder="Your full name"
                 value={signupName}
-                onChange={e => setSignupName(e.target.value)}
+                onChange={(e) => setSignupName(e.target.value)}
                 onFocus={addFocus}
                 onBlur={removeFocus}
                 autoComplete="name"
@@ -403,12 +457,22 @@ export default function Login() {
 
             <div style={s.group}>
               <label style={s.label}>Choose your email</label>
-              <div data-emailwrap style={{ ...s.emailWrap, transition: "border-color 0.2s, box-shadow 0.2s" }}>
+              <div
+                data-emailwrap
+                style={{
+                  ...s.emailWrap,
+                  transition: "border-color 0.2s, box-shadow 0.2s",
+                }}
+              >
                 <input
                   style={s.emailInput}
                   placeholder="yourname"
                   value={signupUsername}
-                  onChange={e => setSignupUsername(e.target.value.replace(/[@\s]/g, "").toLowerCase())}
+                  onChange={(e) =>
+                    setSignupUsername(
+                      e.target.value.replace(/[@\s]/g, "").toLowerCase(),
+                    )
+                  }
                   onFocus={addEmailFocus}
                   onBlur={removeEmailFocus}
                   autoComplete="username"
@@ -418,7 +482,10 @@ export default function Login() {
               </div>
               {signupUsername && (
                 <div style={s.previewText}>
-                  ✦ <strong>{signupUsername}@{EMAIL_DOMAIN}</strong>
+                  ✦{" "}
+                  <strong>
+                    {signupUsername}@{EMAIL_DOMAIN}
+                  </strong>
                 </div>
               )}
             </div>
@@ -430,7 +497,7 @@ export default function Login() {
                 type="password"
                 placeholder="Min. 6 characters"
                 value={signupPassword}
-                onChange={e => setSignupPassword(e.target.value)}
+                onChange={(e) => setSignupPassword(e.target.value)}
                 onFocus={addFocus}
                 onBlur={removeFocus}
                 autoComplete="new-password"
@@ -445,7 +512,7 @@ export default function Login() {
                 type="password"
                 placeholder="Repeat your password"
                 value={signupConfirm}
-                onChange={e => setSignupConfirm(e.target.value)}
+                onChange={(e) => setSignupConfirm(e.target.value)}
                 onFocus={addFocus}
                 onBlur={removeFocus}
                 autoComplete="new-password"
@@ -460,10 +527,22 @@ export default function Login() {
             >
               {loading ? (
                 <>
-                  <span style={{ width: 16, height: 16, border: "2px solid rgba(255,255,255,0.3)", borderTopColor: "#fff", borderRadius: "50%", display: "inline-block", animation: "spin 0.7s linear infinite" }} />
+                  <span
+                    style={{
+                      width: 16,
+                      height: 16,
+                      border: "2px solid rgba(255,255,255,0.3)",
+                      borderTopColor: "#fff",
+                      borderRadius: "50%",
+                      display: "inline-block",
+                      animation: "spin 0.7s linear infinite",
+                    }}
+                  />
                   Creating account…
                 </>
-              ) : "Create Account →"}
+              ) : (
+                "Create Account →"
+              )}
             </button>
           </form>
         )}
@@ -471,12 +550,18 @@ export default function Login() {
         {/* Footer */}
         <div style={s.footerNote}>
           {mode === "login" ? (
-            <>No account?{" "}
-              <button style={s.footerLink} onClick={() => switchMode("signup")}>Create one</button>
+            <>
+              No account?{" "}
+              <button style={s.footerLink} onClick={() => switchMode("signup")}>
+                Create one
+              </button>
             </>
           ) : (
-            <>Already have an account?{" "}
-              <button style={s.footerLink} onClick={() => switchMode("login")}>Sign in</button>
+            <>
+              Already have an account?{" "}
+              <button style={s.footerLink} onClick={() => switchMode("login")}>
+                Sign in
+              </button>
             </>
           )}
         </div>
