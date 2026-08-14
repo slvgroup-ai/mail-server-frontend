@@ -443,7 +443,9 @@ export default function Login() {
           <form onSubmit={handleSignup}>
             <div style={s.group}>
               <label style={s.label}>Full Name</label>
+
               <input
+                name="fullName"
                 style={s.input}
                 type="text"
                 placeholder="Your full name"
@@ -457,6 +459,7 @@ export default function Login() {
 
             <div style={s.group}>
               <label style={s.label}>Choose your email</label>
+
               <div
                 data-emailwrap
                 style={{
@@ -465,6 +468,7 @@ export default function Login() {
                 }}
               >
                 <input
+                  name="emailUsername"
                   style={s.emailInput}
                   placeholder="yourname"
                   value={signupUsername}
@@ -478,8 +482,10 @@ export default function Login() {
                   autoComplete="username"
                   required
                 />
+
                 <div style={s.emailSuffix}>@{EMAIL_DOMAIN}</div>
               </div>
+
               {signupUsername && (
                 <div style={s.previewText}>
                   ✦{" "}
@@ -492,7 +498,9 @@ export default function Login() {
 
             <div style={s.group}>
               <label style={s.label}>Password</label>
+
               <input
+                name="password"
                 style={s.input}
                 type="password"
                 placeholder="Min. 6 characters"
@@ -507,7 +515,9 @@ export default function Login() {
 
             <div style={s.group}>
               <label style={s.label}>Confirm Password</label>
+
               <input
+                name="confirmPassword"
                 style={s.input}
                 type="password"
                 placeholder="Repeat your password"
@@ -521,6 +531,7 @@ export default function Login() {
             </div>
 
             <button
+              name="createAccount"
               type="submit"
               style={{ ...s.submitBtn, opacity: loading ? 0.65 : 1 }}
               disabled={loading}
