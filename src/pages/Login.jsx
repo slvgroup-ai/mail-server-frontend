@@ -326,8 +326,8 @@ export default function Login() {
 
         {/* Tabs */}
         <div style={s.tabs}>
-          <button style={s.tab(mode === "login")} onClick={() => switchMode("login")}>Sign In</button>
-          <button style={s.tab(mode === "signup")} onClick={() => switchMode("signup")}>Create Account</button>
+          <button data-testid="login_button" style={s.tab(mode === "login")} onClick={() => switchMode("login")}>Sign In</button>
+          <button data-testid="create_account_button" style={s.tab(mode === "signup")} onClick={() => switchMode("signup")}>Create Account</button>
         </div>
 
         {/* Messages */}
